@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - 12
+cache: yarn
+install: yarn install
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database bill_db;' -U postgres
+script: yarn test
+after_success: npm run coverage
