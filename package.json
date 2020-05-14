@@ -10,13 +10,29 @@
     "start": "node .",
     "test": "jest"
   },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/express": "^4.17.6",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "jest": "^26.0.1",
     "rimraf": "^3.0.2",
+    "supertest": "^4.0.2",
     "typescript": "^3.9.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-typescript": "^7.9.0",
+    "@types/jest": "^25.2.2",
+    "@types/supertest": "^2.0.9",
+    "babel-jest": "^26.0.1"
   }
 }
