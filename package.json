@@ -2,14 +2,21 @@
   "name": "bill_splitter_api",
   "version": "0.1.0",
   "description": "",
-  "main": "server.js",
+  "main": "dist/index.js",
   "scripts": {
+    "clean": "rimraf dist/*",
+    "build": "tsc",
+    "prestart": "yarn clean && yarn build",
+    "start": "node .",
     "test": "jest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/express": "^4.17.6",
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.2"
   }
 }
