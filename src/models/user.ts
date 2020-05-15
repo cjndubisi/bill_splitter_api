@@ -26,12 +26,13 @@ User.init(
 );
 interface IUser {
   name: string;
+  email: string;
   password: string;
 }
 
-export const createUser = async ({ name, password }: IUser) => {
+export const createUser = async ({ name, email, password }: IUser) => {
   const hash = await bcrypt.hash(password, 10);
-  return await User.create({ name, hash });
+  return await User.create({ name, email, password: hash });
 };
 export const findBy = async (obj: any) => {
   return await User.findOne({ where: obj });

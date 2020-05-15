@@ -4,7 +4,7 @@ import passport from 'passport';
 import dotenv from 'dotenv';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { findBy } from './models/user';
-
+import { userRouter } from './router';
 dotenv.config();
 
 interface OPTS {
@@ -46,6 +46,7 @@ router.get('/', function (req, res) {
 
 // routes
 app.use('/v1', router);
+app.use('/v1/users', userRouter);
 
 app.get('/*', function (req, res) {
   res.status(400).json({ message: 'Bad Request' });
