@@ -1,25 +1,29 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-
+import passport from 'passport';
 import dotenv from 'dotenv';
-import { Sequelize } from 'sequelize';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+
 dotenv.config();
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+interface OPTS {
+  jwtFromRequest: any;
+  secretOrKey: string;
+  issuer: string;
+  audience: string;
+}
+var opts = {} as OPTS;
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = 'secret';
+opts.issuer = 'com.bill_splitsiwe';
+opts.audience = 'com.codementor.bill_splitwise';
 
-const sequelize = new Sequelize(process.env.PG_URL);
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch((err: any) => {
-    console.error('Unable to connect to the database:', err);
-  });
+passport.use(new JwtStrategy(opts, function (jwt_payload, done) {}));
 
-var router = express.Router();
+const router = express.Router();
 
 router.get('/', function (req, res) {
   res.json({ message: 'Root Page' });
