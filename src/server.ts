@@ -3,11 +3,9 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import dotenv from 'dotenv';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import { findBy } from './models/user';
 
 dotenv.config();
-const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
 interface OPTS {
   jwtFromRequest: any;
@@ -21,7 +19,24 @@ opts.secretOrKey = 'secret';
 opts.issuer = 'com.bill_splitsiwe';
 opts.audience = 'com.codementor.bill_splitwise';
 
-passport.use(new JwtStrategy(opts, function (jwt_payload, done) {}));
+passport.use(
+  new JwtStrategy(opts, async (jwt_payload, done) => {
+    try {
+      const user = await findBy({ id: jwt_payload.id });
+      if (user) {
+        return done(null, user);
+      }
+      done(null, false);
+    } catch (err) {
+      return done(err, false);
+    }
+  })
+);
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(passport.initialize());
 
 const router = express.Router();
 
