@@ -8,9 +8,12 @@
     "build": "tsc",
     "prestart": "yarn clean && yarn build",
     "start": "node .",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "jest": {
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
     "testEnvironment": "node",
     "modulePathIgnorePatterns": [
       "<rootDir>/dist/"

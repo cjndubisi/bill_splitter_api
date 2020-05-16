@@ -17,11 +17,11 @@ passport.use(
     },
     async (req, email, password, done) => {
       const name = req.body.name;
+
       if (!(name && password && email)) {
         return done(null, false, { message: 'Bad Request' });
       }
       try {
-        const name = req.body.name;
         const user = await createUser({ email, password, name });
 
         return done(null, user);
@@ -45,7 +45,7 @@ passport.use(
         const user = await findBy({ email });
         const invalid = { message: 'Invalid email and password' };
         if (!user) {
-          return done('null', false, invalid);
+          return done(null, false, invalid);
         }
         const valid = await user.verifyPassword(password);
         if (!valid) {

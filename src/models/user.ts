@@ -11,13 +11,16 @@ class User extends Sequelize.Model {
     return await bcrypt.compare(password, this.password);
   };
 }
-
 User.init(
   {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     name: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true,
     },
     email: {
       type: Sequelize.STRING,
@@ -32,6 +35,12 @@ User.init(
   {
     sequelize: db.sequelize,
     modelName: 'user',
+    indexes: [
+      {
+        unique: true,
+        fields: ['email'],
+      },
+    ],
   }
 );
 interface IUser {
