@@ -1,5 +1,6 @@
 import request from 'supertest';
 import app from '../server';
+jest.mock('sequelize');
 
 describe('sever', () => {
   it('can access /v1', async () => {
