@@ -31,7 +31,5 @@ export const createGroup = async ({ name }: { name: string }) => {
 };
 
 export const findBy = async (obj: any) => {
-  console.log('asdfsad', obj);
-
   return await Group.findOne({ where: obj });
 };
