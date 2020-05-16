@@ -1,9 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import dotenv from 'dotenv';
-import { userRouter } from './router';
-dotenv.config();
+import { userRouter, groupRouter } from './router';
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,6 +17,7 @@ router.get('/', function (req, res) {
 // routes
 app.use('/v1', router);
 app.use('/v1/users', userRouter);
+app.use('/v1/groups', groupRouter);
 
 app.get('/*', function (req, res) {
   res.status(400).json({ message: 'Bad Request' });
