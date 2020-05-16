@@ -32,9 +32,37 @@ passport.use(
   )
 );
 
+passport.use(
+  'login',
+  new localStrategy(
+    {
+      usernameField: 'email',
+      passwordField: 'password',
+      passReqToCallback: true,
+    },
+    async (req, email, password, done) => {
+      try {
+        const user = await findBy({ email });
+        const invalid = { message: 'Invalid email and password' };
+        if (!user) {
+          return done('null', false, invalid);
+        }
+        const valid = await user.verifyPassword(password);
+        if (!valid) {
+          return done(null, false, invalid);
+        }
+        req.user = user;
+        return done(null, user, { message: 'Logged in Successfully' });
+      } catch (error) {
+        done(error);
+      }
+    }
+  )
+);
+
 var opts = {} as StrategyOptions;
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = 'secret';
+opts.secretOrKey = process.env.JWT_SECRET;
 opts.issuer = 'com.bill_splitsiwe';
 opts.audience = 'com.codementor.bill_splitwise';
 
