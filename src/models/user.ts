@@ -2,7 +2,16 @@ import db from '../db';
 import Sequelize from 'sequelize';
 import bcrypt from 'bcrypt';
 
-class User extends Sequelize.Model {}
+class User extends Sequelize.Model {
+  name!: string;
+  password!: string;
+  email!: string;
+
+  verifyPassword = async (password: string) => {
+    return await bcrypt.compare(password, this.password);
+  };
+}
+
 User.init(
   {
     name: {
@@ -17,6 +26,7 @@ User.init(
     },
     password: {
       type: Sequelize.STRING,
+      allowNull: false,
     },
   },
   {

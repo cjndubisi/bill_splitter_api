@@ -10,12 +10,22 @@ jest.mock('../../models/user', () => {
 });
 
 describe('User Route', () => {
+  it('fails on invalid param', async () => {
+    const res = await request(app)
+      .post('/v1/users/signup')
+      .send({ email: 'fasdf', password: 'fsdfs', name: 'safa' });
+    console.log(res.body, res.status);
+    expect(res.body.message).not.toBeNull();
+    expect(res.body.message).toBe('Signup Successful');
+  });
+
   it('can create account', async () => {
     const res = await request(app)
       .post('/v1/users/signup')
       .send({ email: 'fasdf', password: 'fsdfs', name: 'safa' });
+    console.log(res.body, res.status);
 
     expect(res.body.message).not.toBeNull();
-    expect(res.body.message).toBe('Succesfully logged');
+    expect(res.body.message).toBe('Signup Successful');
   });
 });
