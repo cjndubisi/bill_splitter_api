@@ -15,7 +15,6 @@ describe('User Route', () => {
       const res = await request(app)
         .post('/v1/users/signup')
         .send({ email: 'fasdf', password: 'fsdfs' });
-      console.log(res.body, res.status);
 
       expect(res.body.message).toBe('Bad Request');
     });

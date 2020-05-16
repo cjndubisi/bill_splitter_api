@@ -7,12 +7,11 @@ const router = Router();
 const login = (
   req: Express.Request,
   res: any,
-  next: NextFunction,
   { message, user }: { message: string; user: any }
 ) => {
   req.login(user, { session: false }, async (error) => {
     if (error) {
-      return next(error);
+      return res.status(400).json({ message: error.message });
     }
     const payload = { _id: user.id, email: user.email };
     const token = jwt.sign({ user: payload }, process.env.JWT_SECRET);
@@ -28,11 +27,15 @@ router.post('/signup', async (req, res, next) => {
   passport.authenticate('signup', { session: false }, (err, user, info) => {
     try {
       if (err || !user) {
-        return res.status(401).json({ message: 'Bad Request' });
+        throw err;
       }
-      return login(req, res, next, { user, message: 'Signup Successful' });
+      return login(req, res, { user, message: 'Signup Successful' });
     } catch (error) {
-      return next(error);
+      let message = 'Bad Request';
+      if (error?.errors) {
+        message = error.errors.map((error: any) => error.message)[0];
+      }
+      return res.status(400).json({ message });
     }
   })(req, res, next);
 });
@@ -44,7 +47,7 @@ router.post('/login', async (req, res, next) => {
         const error = new Error('Unable to authenticate');
         return next(error);
       }
-      return login(req, res, next, { user, message: 'Login Successful' });
+      return login(req, res, { user, message: 'Login Successful' });
     } catch (error) {
       return next(error);
     }
