@@ -2,7 +2,6 @@ import db from '../db';
 import Sequelize from 'sequelize';
 
 class Group extends Sequelize.Model {}
-
 Group.init(
   {
     id: {
@@ -32,4 +31,8 @@ export const createGroup = async ({ name }: { name: string }) => {
 
 export const findBy = async (obj: any) => {
   return await Group.findOne({ where: obj });
+};
+
+export const deleteGroup = async (obj: any) => {
+  return await Group.destroy({ where: obj });
 };
