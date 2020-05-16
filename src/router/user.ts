@@ -1,17 +1,41 @@
-import { Router } from 'express';
+import { Router, NextFunction } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-require('./../core/auth');
 
 const router = Router();
 
-router.post(
-  '/signup',
-  passport.authenticate('signup', { session: false }),
-  async (req, res) => {
-    res.status(201).json({ user: req.user, message: 'Signup Successful' });
-  }
-);
+const login = (
+  req: Express.Request,
+  res: any,
+  next: NextFunction,
+  { message, user }: { message: string; user: any }
+) => {
+  req.login(user, { session: false }, async (error) => {
+    if (error) {
+      return next(error);
+    }
+    const payload = { _id: user.id, email: user.email };
+    const token = jwt.sign({ user: payload }, process.env.JWT_SECRET);
+    res.json({
+      user,
+      token,
+      message,
+    });
+  });
+};
+
+router.post('/signup', async (req, res, next) => {
+  passport.authenticate('signup', { session: false }, (err, user, info) => {
+    try {
+      if (err || !user) {
+        return res.status(401).json({ message: 'Bad Request' });
+      }
+      return login(req, res, next, { user, message: 'Signup Successful' });
+    } catch (error) {
+      return next(error);
+    }
+  })(req, res, next);
+});
 
 router.post('/login', async (req, res, next) => {
   passport.authenticate('login', { session: false }, (err, user, info) => {
@@ -20,14 +44,7 @@ router.post('/login', async (req, res, next) => {
         const error = new Error('Unable to authenticate');
         return next(error);
       }
-      req.login(user, { session: false }, async (error) => {
-        if (error) {
-          return next(error);
-        }
-        const payload = { _id: user.id, email: user.email };
-        const token = jwt.sign({ user: payload }, process.env.JWT_SECRET);
-        res.json({ user, token, message: 'Signup Successful' });
-      });
+      return login(req, res, next, { user, message: 'Login Successful' });
     } catch (error) {
       return next(error);
     }
