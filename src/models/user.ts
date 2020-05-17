@@ -4,9 +4,11 @@ import bcrypt from 'bcrypt';
 import Group from './group';
 
 export default class User extends Sequelize.Model {
+  id!: number;
   name!: string;
   password!: string;
   email!: string;
+  activated!: boolean;
 
   verifyPassword = async (password: string) => {
     return await bcrypt.compare(password, this.password);
@@ -37,6 +39,11 @@ User.init(
       validate: {
         min: 4,
       },
+    },
+    activated: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {

@@ -16,8 +16,7 @@ beforeAll(async () => {
   createdGroup = await supertest(app)
     .post('/v1/groups')
     .set('Authorization', `bearer ${userToken}`)
-    .send({ name: 'group_test_1' })
-    .expect(201);
+    .send({ name: 'group_test_1' });
 });
 
 describe('Group Route', () => {

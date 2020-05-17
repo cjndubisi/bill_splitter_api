@@ -3,6 +3,7 @@ import app from '../../server';
 import db from '../../db';
 import faker from 'faker';
 import Group, { createGroup } from '../../models/group';
+import User from '../../models/user';
 let created: any = null;
 beforeAll(async () => {
   const res = await request(app)
@@ -39,6 +40,37 @@ describe('User Route', () => {
       expect(res.body.user).not.toBeNull();
       expect(res.body.token).not.toBeNull();
       expect(res.body.message).not.toBeNull();
+    });
+  });
+
+  describe('invited user', () => {
+    it('can signup', async () => {
+      const group = await Group.create({ name: 'testing' });
+      let invitedInfo = {
+        name: 'invated',
+        email: faker.internet.email(),
+        password: 'faker.password',
+      };
+      const invited = await User.create({ ...invitedInfo, activated: false });
+      const res = await request(app).post('/v1/users/signup').send(invitedInfo);
+
+      expect(res.body.user.id).toBe(invited.id);
+      expect(res.body.user.activated).toBe(true);
+    });
+
+    it('cannot login', async () => {
+      const group = await Group.create({ name: 'testing' });
+      let invitedInfo = {
+        name: 'invated',
+        email: faker.internet.email(),
+        password: 'faker.password',
+      };
+      const invited = await User.create({ ...invitedInfo, activated: false });
+      delete invitedInfo.name;
+      const res = await request(app)
+        .post('/v1/users/login')
+        .send(invitedInfo)
+        .expect(401);
     });
   });
 });

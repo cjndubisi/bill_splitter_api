@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as localStrategy } from 'passport-local';
-import { createUser, findBy } from '../models/user';
+import User, { createUser, findBy } from '../models/user';
+import bcrypt from 'bcrypt';
 import {
   Strategy as JwtStrategy,
   ExtractJwt,
@@ -22,10 +23,26 @@ passport.use(
         return done(null, false, { message: 'Bad Request' });
       }
       try {
-        const user = await createUser({ email, password, name });
+        let user: User = null;
+        const hash = await bcrypt.hash(password, 10);
+        user = await User.findOne({
+          where: { email, activated: false },
+          include: [{ all: true }],
+        });
+        if (!user) {
+          user = await createUser({ email, password, name });
+          return done(null, user);
+        }
+        // update user to new email and activate account
+        // TODO; Email activation
+        user.password = hash;
+        user.activated = true;
+        await user.save();
 
         return done(null, user);
       } catch (error) {
+        console.log(error);
+
         done(error);
       }
     }
@@ -42,7 +59,7 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
-        const user = await findBy({ email });
+        const user = await findBy({ email, activated: true });
         const invalid = { message: 'Invalid email and password' };
         if (!user) {
           return done(null, false, invalid);

@@ -44,12 +44,11 @@ router.post('/login', async (req, res, next) => {
   passport.authenticate('login', { session: false }, (err, user, info) => {
     try {
       if (err || !user) {
-        const error = new Error('Unable to authenticate');
-        return next(error);
+        throw new Error('Unable to authenticate');
       }
       return login(req, res, { user, message: 'Login Successful' });
     } catch (error) {
-      return next(error);
+      return res.status(401).json({ message: 'Invalid email and password' });
     }
   })(req, res, next);
 });
