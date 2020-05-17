@@ -13,7 +13,6 @@ const router = Router();
 
 router.post(
   '/',
-  passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
       const user: any = req.user;
@@ -31,7 +30,6 @@ router.post(
 
 router.put(
   '/:id',
-  passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
       const group: any = await findBy({ id: req.params.id });
@@ -48,7 +46,6 @@ router.put(
 
 router.get(
   '/:id',
-  passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
       const group = await findBy({ id: req.params.id });
@@ -61,7 +58,6 @@ router.get(
 
 router.delete(
   '/:id',
-  passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
       await deleteGroup({ id: req.params.id });

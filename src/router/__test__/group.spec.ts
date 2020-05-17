@@ -6,7 +6,7 @@ import faker from 'faker';
 let userToken = '';
 let createdGroup: any = null;
 
-beforeAll(async (done) => {
+beforeAll(async () => {
   await db.sequelize.sync();
   const res = await supertest(app)
     .post('/v1/users/signup')
@@ -18,13 +18,6 @@ beforeAll(async (done) => {
     .set('Authorization', `bearer ${userToken}`)
     .send({ name: 'group_test_1' })
     .expect(201);
-
-  done();
-});
-
-afterAll(async (done) => {
-  await db.sequelize.query('TRUNCATE usergroups, groups, users;');
-  done();
 });
 
 describe('Group Route', () => {
@@ -89,7 +82,7 @@ describe('Group Route', () => {
     expect(res.status).toEqual(200);
   });
 
-  it.only('can add users to group', async () => {
+  it('can add users to group', async () => {
     const { body } = await supertest(app)
       .post('/v1/users/signup')
       .send({ email: faker.internet.email(), password: 'fsdfs', name: 'safa' });

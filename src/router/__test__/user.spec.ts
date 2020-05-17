@@ -2,6 +2,7 @@ import request from 'supertest';
 import app from '../../server';
 import db from '../../db';
 import faker from 'faker';
+import Group, { createGroup } from '../../models/group';
 let created: any = null;
 beforeAll(async () => {
   const res = await request(app)
