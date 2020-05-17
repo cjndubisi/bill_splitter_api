@@ -34,7 +34,7 @@ Bill.init(
 );
 
 Bill.belongsTo(User, { as: 'Payer', foreignKey: 'payerId', constraints: true });
-Bill.belongsTo(Group, { constraints: true });
+Group.hasMany(Bill, { onDelete: 'cascade' });
 // creates table bill_participant for data access; bill.participants()
 // TODO: Future Request, Split bill unevenly.
 Bill.belongsToMany(User, { through: 'bill_particiants', as: 'participants' });

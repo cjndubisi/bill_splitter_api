@@ -2,7 +2,11 @@ import db from '../db';
 import Sequelize from 'sequelize';
 import bcrypt from 'bcrypt';
 import Group from './group';
-
+export interface UserAttributes {
+  getGroups: () => any[];
+  reload: () => void;
+  createGroup: (group: any) => Promise<Group>;
+}
 export default class User extends Sequelize.Model {
   id!: number;
   name!: string;
