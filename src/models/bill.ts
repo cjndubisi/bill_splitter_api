@@ -32,26 +32,9 @@ Bill.init(
     modelName: 'bill',
   }
 );
-export class Participant extends Sequelize.Model {}
-Participant.init(
-  {
-    id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-  },
-  {
-    sequelize: db.sequelize,
-    modelName: 'participant',
-  }
-);
-// creates bill.payerId
+
 Bill.belongsTo(User, { as: 'Payer', foreignKey: 'payerId', constraints: true });
 Bill.belongsTo(Group, { constraints: true });
 // creates table bill_participant for data access; bill.participants()
 // TODO: Future Request, Split bill unevenly.
-
-Bill.hasMany(Participant);
-Bill.belongsToMany(User, { through: { model: Participant, unique: false } });
-Bill.belongsToMany(Group, { through: { model: Participant, unique: false } });
+Bill.belongsToMany(User, { through: 'bill_particiants', as: 'participants' });
