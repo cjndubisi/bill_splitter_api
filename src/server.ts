@@ -17,7 +17,11 @@ router.get('/', function (req, res) {
 // routes
 app.use('/v1', router);
 app.use('/v1/users', userRouter);
-app.use('/v1/groups', groupRouter);
+app.use(
+  '/v1/groups',
+  passport.authenticate('jwt', { session: false }),
+  groupRouter
+);
 
 app.get('/*', function (req, res) {
   res.status(400).json({ message: 'Bad Request' });

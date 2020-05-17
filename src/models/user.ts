@@ -1,11 +1,14 @@
 import db from '../db';
 import Sequelize from 'sequelize';
 import bcrypt from 'bcrypt';
+import Group from './group';
 
-class User extends Sequelize.Model {
+export default class User extends Sequelize.Model {
+  id!: number;
   name!: string;
   password!: string;
   email!: string;
+  activated!: boolean;
 
   verifyPassword = async (password: string) => {
     return await bcrypt.compare(password, this.password);
@@ -26,10 +29,21 @@ User.init(
       type: Sequelize.STRING,
       allowNull: false,
       unique: true,
+      validate: {
+        isEmail: true,
+      },
     },
     password: {
       type: Sequelize.STRING,
       allowNull: false,
+      validate: {
+        min: 4,
+      },
+    },
+    activated: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {
@@ -43,6 +57,9 @@ User.init(
     ],
   }
 );
+User.belongsToMany(Group, { through: 'usergroups', onDelete: 'cascade' });
+Group.belongsToMany(User, { through: 'usergroups', onDelete: 'cascade' });
+
 interface IUser {
   name: string;
   email: string;
