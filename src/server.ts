@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import { userRouter, groupRouter } from './router';
+import { userRouter, groupRouter, billRouter } from './router';
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,6 +17,11 @@ router.get('/', function (req, res) {
 // routes
 app.use('/v1', router);
 app.use('/v1/users', userRouter);
+app.use(
+  '/v1/bills',
+  passport.authenticate('jwt', { session: false }),
+  billRouter
+);
 app.use(
   '/v1/groups',
   passport.authenticate('jwt', { session: false }),

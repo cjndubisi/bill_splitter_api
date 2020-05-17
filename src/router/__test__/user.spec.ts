@@ -6,15 +6,17 @@ import Group, { createGroup } from '../../models/group';
 import User from '../../models/user';
 let created: any = null;
 beforeAll(async () => {
+  await db.sequelize.sync();
   const res = await request(app)
     .post('/v1/users/signup')
     .send({ email: faker.internet.email(), password: 'fsdfs', name: 'safa' });
   created = res.body;
-  return await db.sequelize.sync();
 });
 
-afterAll(async () => {
-  await db.sequelize.query('TRUNCATE usergroups, groups, users;');
+afterAll(() => {
+  return db.sequelize.query(
+    'TRUNCATE usergroups, bill_particiants, bills, groups, users CASCADE;'
+  );
 });
 
 describe('User Route', () => {

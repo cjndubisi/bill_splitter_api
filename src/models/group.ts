@@ -1,11 +1,6 @@
 import db from '../db';
 import Sequelize from 'sequelize';
 
-export interface UserAttributes {
-  getGroups: () => any[];
-  reload: () => void;
-}
-
 export default class Group extends Sequelize.Model {}
 Group.init(
   {
@@ -35,7 +30,7 @@ export const createGroup = async ({ name }: { name: string }) => {
 };
 
 export const findBy = async (obj: any) => {
-  return await Group.findOne({ where: obj });
+  return await Group.findOne({ where: obj, include: [{ all: true }] });
 };
 
 export const deleteGroup = async (obj: any) => {
