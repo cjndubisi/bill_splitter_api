@@ -3,6 +3,7 @@ import app from '../../server';
 import db from '../../db';
 import {} from '../../models/group';
 import faker from 'faker';
+import User from '../../models/user';
 let userToken = '';
 let createdGroup: any = null;
 
@@ -17,6 +18,10 @@ beforeAll(async () => {
     .post('/v1/groups')
     .set('Authorization', `bearer ${userToken}`)
     .send({ name: 'group_test_1' });
+});
+
+afterAll(() => {
+  return db.sequelize.query('TRUNCATE usergroups, groups, users CASCADE;');
 });
 
 describe('Group Route', () => {
@@ -82,10 +87,6 @@ describe('Group Route', () => {
   });
 
   it('can add users to group', async () => {
-    const { body } = await supertest(app)
-      .post('/v1/users/signup')
-      .send({ email: faker.internet.email(), password: 'fsdfs', name: 'safa' });
-
     const res = await supertest(app)
       .post(`/v1/groups/${createdGroup.body.id}/users`)
       .set('Authorization', `bearer ${userToken}`)
