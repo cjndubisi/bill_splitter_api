@@ -1,12 +1,18 @@
 import request from 'supertest';
 import app from '../../server';
-import db from './../../db';
+import db from '../../db';
+import faker from 'faker';
+let created: any = null;
 beforeAll(async () => {
-  await db.sequelize.sync();
+  const res = await request(app)
+    .post('/v1/users/signup')
+    .send({ email: faker.internet.email(), password: 'fsdfs', name: 'safa' });
+  created = res.body;
+  return await db.sequelize.sync();
 });
 
 afterAll(async () => {
-  await db.sequelize.query('DROP TABLE groups; DROP TABLE users;');
+  await db.sequelize.query('TRUNCATE usergroups, groups, users;');
 });
 
 describe('User Route', () => {
@@ -14,28 +20,21 @@ describe('User Route', () => {
     it('fails on invalid param', async () => {
       const res = await request(app)
         .post('/v1/users/signup')
-        .send({ email: 'fasdf', password: 'fsdfs' });
+        .send({ email: faker.internet.email(), password: 'fsdfs' });
 
       expect(res.body.message).toBe('Bad Request');
     });
 
     it('can create account', async () => {
-      const res = await request(app)
-        .post('/v1/users/signup')
-        .send({ email: 'fasdf', password: 'fsdfs', name: 'safa' });
-
-      expect(res.body.message).toBe('Signup Successful');
+      expect(created.message).toBe('Signup Successful');
     });
   });
 
   describe('login', () => {
     it('can login', async () => {
-      await request(app)
-        .post('/v1/users/signup')
-        .send({ email: 'fasdf', password: 'fsdfs', name: 'safa' });
       const res = await request(app)
         .post('/v1/users/login')
-        .send({ email: 'fasdf', password: 'fsdfss' });
+        .send({ email: faker.internet.email(), password: 'fsdfss' });
       expect(res.body.user).not.toBeNull();
       expect(res.body.token).not.toBeNull();
       expect(res.body.message).not.toBeNull();
