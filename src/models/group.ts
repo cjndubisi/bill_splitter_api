@@ -1,7 +1,12 @@
 import db from '../db';
 import Sequelize from 'sequelize';
 
-class Group extends Sequelize.Model {}
+export interface UserAttributes {
+  getGroups: () => any[];
+  reload: () => void;
+}
+
+export default class Group extends Sequelize.Model {}
 Group.init(
   {
     id: {

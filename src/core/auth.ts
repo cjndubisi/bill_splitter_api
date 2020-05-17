@@ -63,13 +63,11 @@ passport.use(
 var opts = {} as StrategyOptions;
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWT_SECRET;
-opts.issuer = 'com.bill_splitsiwe';
-opts.audience = 'com.codementor.bill_splitwise';
 
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
     try {
-      const user = await findBy({ id: jwt_payload.id });
+      const user = await findBy({ id: jwt_payload.user._id });
       if (user) {
         return done(null, user);
       }
