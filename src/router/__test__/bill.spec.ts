@@ -28,7 +28,9 @@ beforeAll(async () => {
 });
 
 afterAll(() => {
-  return db.sequelize.query('TRUNCATE usergroups, bill_particiants, bills, groups, users CASCADE;');
+  return db.sequelize.query(
+    'TRUNCATE usergroups, bill_particiants, bills, groups, users CASCADE;'
+  );
 });
 
 describe('Bill Route', () => {

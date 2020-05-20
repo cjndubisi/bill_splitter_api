@@ -6,9 +6,9 @@ const router = Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { name, groupId, payerId, amount, otherUsers } = req.body;
-    const groups = await (req.user as UserAttributes).getGroups();
-    const toGroup = groups.find((group) => group.id === groupId);
+    const user = req.user as UserAttributes;
+    const { name, groupId, payerId = user.id, amount, otherUsers } = req.body;
+    const toGroup: any = await findBy({ id: groupId });
     let participants =
       otherUsers || (await toGroup.getUsers()).map((user: User) => user.id);
 
