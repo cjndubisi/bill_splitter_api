@@ -2,11 +2,15 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import { userRouter, groupRouter, billRouter } from './router';
+import morgan from 'morgan';
+import cors from 'cors'
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
+app.use(morgan('combined'));
+app.use(cors())
 
 const router = express.Router();
 
