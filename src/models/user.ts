@@ -3,6 +3,11 @@ import Sequelize from 'sequelize';
 import bcrypt from 'bcrypt';
 import Group from './group';
 export interface UserAttributes {
+  id: number;
+  name: string;
+  password: string;
+  email: string;
+  activated: boolean;
   getGroups: () => any[];
   reload: () => void;
   createGroup: (group: any) => Promise<Group>;
@@ -34,7 +39,9 @@ User.init(
       allowNull: false,
       unique: true,
       validate: {
-        isEmail: true,
+        isEmail: {
+          msg: 'Invalid email format',
+        },
       },
     },
     password: {
@@ -63,6 +70,7 @@ User.init(
 );
 User.belongsToMany(Group, { through: 'usergroups', onDelete: 'cascade' });
 Group.belongsToMany(User, { through: 'usergroups', onDelete: 'cascade' });
+Group.belongsTo(User, { foreignKey: 'creator', constraints: true });
 
 interface IUser {
   name: string;

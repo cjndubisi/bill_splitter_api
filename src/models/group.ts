@@ -33,6 +33,10 @@ export const findBy = async (obj: any) => {
   return await Group.findOne({ where: obj, include: [{ all: true }] });
 };
 
+export const findAll = async (obj: any) => {
+  return await Group.findAll({ where: obj, include: [{ all: true }] });
+};
+
 export const deleteGroup = async (obj: any) => {
   return await Group.destroy({ where: obj });
 };

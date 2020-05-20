@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import Group, { findBy, deleteGroup } from '../models/group';
+import Group, { findBy, deleteGroup, findAll } from '../models/group';
 import { createUser, UserAttributes } from '../models/user';
 const router = Router();
 
@@ -8,6 +8,7 @@ router.post('/', async (req, res) => {
     const user: any = req.user;
     const group: any = await user.createGroup({
       name: req.body.name,
+      creator: user.id,
     });
     return res.status(201).send(group);
   } catch (error) {
@@ -51,7 +52,7 @@ router.delete('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const user: UserAttributes = req.user as UserAttributes;
-    const groups = await user.getGroups();
+    const groups = await findAll({ creator: user.id });
     return res.status(200).json(groups);
   } catch (error) {
     return res.status(400).json({ message: error.message });
