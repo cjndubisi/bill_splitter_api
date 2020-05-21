@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import Group, { findBy, deleteGroup, findAll } from '../models/group';
-import { createUser, UserAttributes } from '../models/user';
+import User, {
+  createUser,
+  UserAttributes,
+  findBy as findUserBy,
+} from '../models/user';
 const router = Router();
 
 router.post('/', async (req, res) => {
@@ -52,7 +56,7 @@ router.delete('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const user: UserAttributes = req.user as UserAttributes;
-    const groups = await findAll({ creator: user.id });
+    const groups = await user.getGroups({ include: [{ all: true }] });
     return res.status(200).json(groups);
   } catch (error) {
     return res.status(400).json({ message: error.message });
@@ -65,12 +69,18 @@ router.post('/:id/users', async ({ params, body }, res) => {
       where: { id: params.id },
       include: [{ all: true }],
     });
-    const userToAdd = body;
-    userToAdd.activated = false;
-    userToAdd.password = 'invalidatePassword';
+    // check for existing user with email
+    let user = await findUserBy({ email: body.email });
 
-    const newUser = await createUser(userToAdd);
-    await group.addUsers(newUser);
+    if (!user) {
+      // invite user
+      const userToAdd = body;
+      userToAdd.activated = false;
+      userToAdd.password = 'invalidatePassword';
+
+      user = await createUser(userToAdd);
+    }
+    await group.addUsers(user);
     await group.reload();
     return res.status(201).json(group);
   } catch (error) {

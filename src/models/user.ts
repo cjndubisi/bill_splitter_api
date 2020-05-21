@@ -8,7 +8,7 @@ export interface UserAttributes {
   password: string;
   email: string;
   activated: boolean;
-  getGroups: () => any[];
+  getGroups: (filter?: any) => any[];
   reload: () => void;
   createGroup: (group: any) => Promise<Group>;
 }
@@ -70,7 +70,10 @@ User.init(
 );
 User.belongsToMany(Group, { through: 'usergroups', onDelete: 'cascade' });
 Group.belongsToMany(User, { through: 'usergroups', onDelete: 'cascade' });
-Group.belongsTo(User, { foreignKey: 'creator', constraints: true });
+Group.belongsTo(User, {
+  foreignKey: { name: 'creator', allowNull: false },
+  constraints: true,
+});
 
 interface IUser {
   name: string;
