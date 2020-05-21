@@ -39,6 +39,7 @@ User.init(
       allowNull: false,
       unique: true,
       validate: {
+        isLowercase: true,
         isEmail: {
           msg: 'Invalid email format',
         },

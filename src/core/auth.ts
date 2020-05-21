@@ -26,10 +26,12 @@ passport.use(
       try {
         let user: User = null;
         const hash = await bcrypt.hash(password, 10);
+
         user = await User.findOne({
-          where: { email, activated: false },
+          where: { email: email.toLowerCase(), activated: false },
           include: [{ all: true }],
         });
+
         if (!user) {
           user = await createUser({ email, password, name });
           return done(null, user);

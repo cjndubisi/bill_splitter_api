@@ -11,7 +11,7 @@ let createdGroup: any = null;
 beforeAll(async () => {
   await db.sequelize.sync();
   let info = {
-    email: faker.internet.email(),
+    email: faker.internet.email().toLowerCase(),
     password: 'random',
   };
   // create user
@@ -21,7 +21,7 @@ beforeAll(async () => {
   })) as User & UserAttributes;
   const { body } = await request(app).post('/v1/users/login').send(info);
   // create goop
-  createdGroup = await user.createGroup({ name: 'ranking' });
+  createdGroup = await user.createGroup({ name: 'ranking', creator: user.id });
 
   user = body.user;
   userToken = body.token;
@@ -41,7 +41,7 @@ describe('Bill Route', () => {
       .set('Authorization', `bearer ${userToken}`)
       .send({
         name: faker.name.firstName(),
-        email: faker.internet.email(),
+        email: faker.internet.email().toLowerCase(),
       });
 
     const participants = group.users?.map((a: any) => a.id);

@@ -9,9 +9,11 @@ let createdGroup: any = null;
 
 beforeAll(async () => {
   await db.sequelize.sync();
-  const res = await supertest(app)
-    .post('/v1/users/signup')
-    .send({ email: faker.internet.email(), password: 'fsdfs', name: 'safa' });
+  const res = await supertest(app).post('/v1/users/signup').send({
+    email: faker.internet.email().toLowerCase(),
+    password: 'fsdfs',
+    name: 'safa',
+  });
   userToken = res.body.token;
 
   createdGroup = await supertest(app)
@@ -21,7 +23,9 @@ beforeAll(async () => {
 });
 
 afterAll(() => {
-  return db.sequelize.query('TRUNCATE usergroups, bill_particiants, bills, groups, users CASCADE;');
+  return db.sequelize.query(
+    'TRUNCATE usergroups, bill_particiants, bills, groups, users CASCADE;'
+  );
 });
 
 describe('Group Route', () => {
@@ -90,7 +94,7 @@ describe('Group Route', () => {
     const res = await supertest(app)
       .post(`/v1/groups/${createdGroup.body.id}/users`)
       .set('Authorization', `bearer ${userToken}`)
-      .send({ name: 'user_2', email: faker.internet.email() })
+      .send({ name: 'user_2', email: faker.internet.email().toLowerCase() })
       .expect(201);
 
     expect(res.body.users.length).toEqual(2);

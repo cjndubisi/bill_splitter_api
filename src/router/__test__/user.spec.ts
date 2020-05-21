@@ -22,9 +22,10 @@ afterAll(() => {
 describe('User Route', () => {
   describe('sign up', () => {
     it('fails on invalid param', async () => {
-      const res = await request(app)
-        .post('/v1/users/signup')
-        .send({ email: faker.internet.email(), password: 'fsdfs' });
+      const res = await request(app).post('/v1/users/signup').send({
+        email: faker.internet.email().toLowerCase(),
+        password: 'fsdfs',
+      });
 
       expect(res.body.message).toBe('Bad Request');
     });
@@ -36,9 +37,10 @@ describe('User Route', () => {
 
   describe('login', () => {
     it('can login', async () => {
-      const res = await request(app)
-        .post('/v1/users/login')
-        .send({ email: faker.internet.email(), password: 'fsdfss' });
+      const res = await request(app).post('/v1/users/login').send({
+        email: faker.internet.email().toLowerCase(),
+        password: 'fsdfss',
+      });
       expect(res.body.user).not.toBeNull();
       expect(res.body.token).not.toBeNull();
       expect(res.body.message).not.toBeNull();
@@ -47,10 +49,9 @@ describe('User Route', () => {
 
   describe('invited user', () => {
     it('can signup', async () => {
-      const group = await Group.create({ name: 'testing' });
       let invitedInfo = {
         name: 'invated',
-        email: faker.internet.email(),
+        email: faker.internet.email().toLowerCase(),
         password: 'faker.password',
       };
       const invited = await User.create({ ...invitedInfo, activated: false });
@@ -61,10 +62,9 @@ describe('User Route', () => {
     });
 
     it('cannot login', async () => {
-      const group = await Group.create({ name: 'testing' });
       let invitedInfo = {
         name: 'invated',
-        email: faker.internet.email(),
+        email: faker.internet.email().toLowerCase(),
         password: 'faker.password',
       };
       const invited = await User.create({ ...invitedInfo, activated: false });
