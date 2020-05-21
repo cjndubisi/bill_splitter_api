@@ -16,8 +16,9 @@ passport.use(
       passwordField: 'password',
       passReqToCallback: true,
     },
-    async (req, email, password, done) => {
+    async (req, emailField, password, done) => {
       const name = req.body.name;
+      const email = emailField.toLowerCase();
 
       if (!(name && password && email)) {
         return done(null, false, { message: 'Bad Request' });
@@ -41,8 +42,6 @@ passport.use(
 
         return done(null, user);
       } catch (error) {
-        console.log(error);
-
         done(error);
       }
     }

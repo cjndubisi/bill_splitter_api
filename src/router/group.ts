@@ -70,7 +70,9 @@ router.post('/:id/users', async ({ params, body }, res) => {
       include: [{ all: true }],
     });
     // check for existing user with email
-    let user = await findUserBy({ email: body.email });
+    let user = await findUserBy({
+      email: (body.email as string).toLowerCase(),
+    });
 
     if (!user) {
       // invite user

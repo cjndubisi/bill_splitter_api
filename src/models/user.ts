@@ -63,11 +63,12 @@ User.init(
     indexes: [
       {
         unique: true,
-        fields: ['email'],
+        fields: [Sequelize.fn('lower', Sequelize.col('email'))] as any,
       },
     ],
   }
 );
+
 User.belongsToMany(Group, { through: 'usergroups', onDelete: 'cascade' });
 Group.belongsToMany(User, { through: 'usergroups', onDelete: 'cascade' });
 Group.belongsTo(User, {
