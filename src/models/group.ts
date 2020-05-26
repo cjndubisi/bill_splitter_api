@@ -1,5 +1,6 @@
 import db from '../db';
 import Sequelize from 'sequelize';
+import Bill from './bill';
 
 export default class Group extends Sequelize.Model {}
 Group.init(
@@ -30,7 +31,7 @@ export const createGroup = async ({ name }: { name: string }) => {
 };
 
 export const findBy = async (obj: any) => {
-  return await Group.findOne({ where: obj, include: [{ all: true }] });
+  return await Group.findOne({ where: obj, include: [{ all: true, nested: true } as any] });
 };
 
 export const findAll = async (obj: any) => {
